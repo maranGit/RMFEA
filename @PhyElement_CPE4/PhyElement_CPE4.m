@@ -12,18 +12,21 @@ classdef PhyElement_CPE4 < PhyElement
 %           |
     properties
         thickness = 1.0
+        E = 30.0e6
+        nu = 0.3
     end
-    properties (Dependent)
-        J
-    end
+%     properties (Dependent)
+%         J
+%     end
     methods
         function obj = PhyElement_CPE4()
             obj.neNodes = 4;
             obj.nedof = 8;
+            obj.fee = zeros(8, 1);
             %obj.eNodes(4, 1) = PhyNode();
             %obj.edofs(8, 1) = PhyDof();
         end
-        formJ(obj)
+        J = formJ(obj)
         
         % detail of virtual function in PhyElement.m
         % get surface area of the element

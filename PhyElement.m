@@ -7,6 +7,9 @@ classdef PhyElement < handle
         edofs % vector of dofs
         dofMap % map from element to global dofs ( vector<int> )
         matID % type of material in global
+        ke % element stiffness matrix
+        fde % force vector from essential BC
+        fee 
     end
     methods
         function obj = PhyElement()

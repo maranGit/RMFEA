@@ -29,8 +29,8 @@ classdef FEMSolver < handle
         % All steps together:
         function FEMSolve(obj, runName)
             obj.Input(runName);
-            %obj.Calculate_ElementStiffness_Force();
-            %obj.Assemble();
+            obj.Calculate_ElementStiffness_Force();
+            obj.Assemble();
         end
     end
     
