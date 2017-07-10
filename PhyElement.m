@@ -9,7 +9,10 @@ classdef PhyElement < handle
         matID % type of material in global
         ke % element stiffness matrix
         fde % force vector from essential BC
-        fee 
+        foe % surface load and body force (and thermal force in future)
+        fee % foe - fde
+        strain % strain at each integration point
+        stress % stress at each integration point
     end
     methods
         function obj = PhyElement()
@@ -29,6 +32,8 @@ classdef PhyElement < handle
         % 1. calculate foe: sum of all forces, but fde
         % 2. calculate fde = ke * ae
         % 3. calculate fee = fde + foe
+        
+        Calculate_Stress_Strain(obj)
         
         SpecificOutput(obj)
         

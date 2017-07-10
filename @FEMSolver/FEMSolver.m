@@ -31,6 +31,9 @@ classdef FEMSolver < handle
             obj.Input(runName);
             obj.Calculate_ElementStiffness_Force();
             obj.Assemble();
+            d = obj.Solve_Dofs();
+            obj.Assign_dof(d);
+            obj.UpdateFpNodalPrescribedForces;
         end
     end
     
@@ -57,12 +60,13 @@ classdef FEMSolver < handle
         
         % Step 12: Solve global (free) dof a from Ka = F
         % successful solution returns true
-        Solve_Dofs(obj)
+        d = Solve_Dofs(obj)
         
         % Step 13: Assign a to nodes and elements
-        Assign_dof(obj)
+        Assign_dof(obj, d)
         
         % Step 14: Compute prescribed dof forces
         UpdateFpNodalPrescribedForces(obj)
+        
     end
 end

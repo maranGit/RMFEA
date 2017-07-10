@@ -14,15 +14,25 @@ classdef PhyElement_CPE4 < PhyElement
         thickness = 1.0
         E = 30.0e6
         nu = 0.3
+        E1
+        E2
+        G
+        Bmat_1
+        Bmat_2
+        Bmat_3
+        Bmat_4
     end
 %     properties (Dependent)
 %         J
 %     end
     methods
         function obj = PhyElement_CPE4()
+            obj = obj@PhyElement();
             obj.neNodes = 4;
             obj.nedof = 8;
             obj.fee = zeros(8, 1);
+            obj.fde = zeros(8, 1);
+            obj.foe = zeros(8, 1);
             %obj.eNodes(4, 1) = PhyNode();
             %obj.edofs(8, 1) = PhyDof();
         end
@@ -37,6 +47,8 @@ classdef PhyElement_CPE4 < PhyElement
         
         % form element stiffness matrix and force vector
         Calculate_ElementStiffness_Force(obj)
+        
+        Calculate_Stress_Strain(obj)
         
         SpecificOutput(obj)
         
