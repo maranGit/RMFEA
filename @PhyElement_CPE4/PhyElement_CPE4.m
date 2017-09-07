@@ -12,8 +12,8 @@ classdef PhyElement_CPE4 < PhyElement
 %           |
     properties
         thickness = 1.0
-        E = 30.0e6
-        nu = 0.3
+        E = 100
+        nu = 0.25
         E1
         E2
         G
