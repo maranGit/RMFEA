@@ -46,7 +46,7 @@ classdef PhyElement_CPE4 < PhyElement
         setInternalMaterialProperties(obj)
         
         % form element stiffness matrix and force vector
-        Calculate_ElementStiffness_Force(obj)
+        Calculate_ElementStiffness_Force(obj, mat)
         
         Calculate_Stress_Strain(obj)
         

@@ -1,4 +1,7 @@
 function Assemble(obj)
+% assemble stiffness matrix and essential BC caused force
+% step 1: initialize K
+obj.K = zeros(obj.nf, obj.nf);
 for e = 1:obj.ne %loop over elements
     % fee = feo; %element total force = element all forces except essential force
     currEle = obj.elements(e);

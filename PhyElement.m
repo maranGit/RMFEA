@@ -13,6 +13,7 @@ classdef PhyElement < handle
         fee % foe - fde
         strain % strain at each integration point
         stress % stress at each integration point
+        Fint   % F internal at each integration point
     end
     methods
         function obj = PhyElement()

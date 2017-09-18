@@ -19,6 +19,9 @@ ne_temp = size(incidences, 1); % int, total elements
 ndof_temp = nNodes_temp * obj.dim; % int, total dofs
 np_temp = size(EBC, 1); % int, total prescribed dofs
 nf_temp = ndof_temp - np_temp; % int, total free dofs
+EBC_temp = zeros(np_temp, 2);
+NBC_temp = zeros(size(NBC, 1), 2);
+FBC_temp = zeros(nf_temp, 1);
 
 %% initialization
 % initialize problem size
@@ -38,9 +41,10 @@ for temp = 1:np_temp
     currDof = dofP(temp);
     dofAll(currDof).p = 1;
     dofAll(currDof).pos = -temp;
-    dofAll(currDof).v = EBC(temp, 3);
+    % dofAll(currDof).v = EBC(temp, 3);
     dofAll(currDof).f = 0;
     dofAssigned(currDof) = 1;
+    EBC_temp(temp, :) = [currDof, EBC(temp, 3)]; % collect essential BC
 end
 
 % initialize free dofs
@@ -51,6 +55,7 @@ for temp = 1:ndof_temp
         dofAll(temp).pos = temp2;
         dofAll(temp).v = 0;
         dofAll(temp).f = 0;
+        FBC_temp(temp2) = temp; % collecting all natural BC
         temp2 = temp2 + 1;
     end
 end
@@ -58,10 +63,18 @@ for temp = 1:size(NBC, 1)
     currDof = dofF(temp);
     dofAll(currDof).p = 0;
     dofAll(currDof).v = 0;
-    dofAll(currDof).f = NBC(temp, 3);
+    % dofAll(currDof).f = NBC(temp, 3);
+    NBC_temp(temp, :) = [currDof, NBC(temp, 3)];
 end
-obj.dofs = dofAll(dofAssigned == 0);
-
+% obj.dofs = dofAll(dofAssigned == 0);
+obj.dofs = dofAll; % I fount that this way is easier for controlling stepped EBC and NBC
+%
+% rows have to be sorted so that assemble of residual term can be written
+% in Matlab style
+obj.NBC = sortrows(NBC_temp);
+obj.EBC = sortrows(EBC_temp);
+obj.FBC = sortrows(FBC_temp);
+%
 % initialize nodes
 curDim = obj.dim;
 nodeAll(nNodes_temp, 1) = PhyNode();
@@ -72,7 +85,7 @@ for temp = 1:nNodes_temp
     nodeAll(temp).coordinates = coordinates(temp, :);
 end
 obj.nodes = nodeAll;
-
+%
 % initialize elements
 eleAll(ne_temp, 1) = eval(eType); % avoid using 'switch'
 for temp = 1:ne_temp
@@ -82,10 +95,20 @@ for temp = 1:ne_temp
     eleAll(temp).dofMap = [eleAll(temp).nedof.pos]';
 end
 obj.elements = eleAll;
-
+%
 % intialize stiffness matrix and force vector
 obj.K = zeros(nf_temp, nf_temp);
 obj.Fp = zeros(nf_temp, 1);
 obj.setPositions_F();
-
+%
+% multiplication factor for each step
+if exist('mults', 'var')
+    obj.mults = mults;
+    obj.nstep = length(mults);
+end
+%
+% read material model and parameters (allow only one material model for now)
+% MateDecl = strcat(mat{1},'(',mat{2},')');
+% obj.matAll = eval(MateDecl);
+obj.matAll = Hyperelastic([40;60]);
 end

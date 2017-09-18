@@ -6,6 +6,26 @@ classdef PhyDof < handle
         f = 0.0 % (double) force corresponding to dof
     end
     methods
-        
+        function obj = PhyDof(p, pos, v, f)
+            if nargin == 0
+                obj.p = 0;
+                obj.pos = 1;
+                obj.v = 0.0;
+                obj.f = 0.0;
+            elseif nargin == 4
+                obj.p = p;
+                obj.pos = pos;
+                obj.v = v;
+                obj.f = f;
+            else
+                error('Invalid initiation of PhyDof');
+            end
+        end
+        function vUpdate(obj, deltaV)
+            obj.v = obj.v + deltaV;
+        end
+        function fUpdate(obj, deltaF)
+            obj.f = obj.f + deltaF;
+        end
     end
 end
