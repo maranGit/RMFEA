@@ -27,13 +27,13 @@ classdef Hyperelastic < MaterialModel
             if isequal(size(eps),[3,1])
                 traceEps = eps(1) + eps(2);
                 temp = 0.5*obj.a*(2+traceEps)/(1+traceEps)^2;
-                D = [temp+6*obj.b, temp, 0;
-                     temp, temp+6*obj.b, 0;
-                     0, 0, 3*obj.b];
+                D = [temp+3*obj.b, temp, 0;
+                     temp, temp+3*obj.b, 0;
+                     0, 0, 1.5*obj.b];
                 temp = 0.5 * obj.a * (log(1+traceEps) + traceEps/(1+traceEps));
-                sigma = [temp + 6*obj.b*eps(1);
-                         temp + 6*obj.b*eps(2);
-                         3 * obj.b * eps(3)];
+                sigma = [temp + 3*obj.b*eps(1);
+                         temp + 3*obj.b*eps(2);
+                         1.5 * obj.b * eps(3)];
             elseif isequal(size(eps), [6,1])
                 D = 0;
                 sigma = 0;
