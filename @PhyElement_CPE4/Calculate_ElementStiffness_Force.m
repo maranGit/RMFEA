@@ -91,9 +91,9 @@ obj.Fint = transpose(Bmat1) * sigma1 / det(J1) ...
     + transpose(Bmat4) * sigma4 / det(J4);
 %
 % construct element force vector (including body force, surface loading and displacement force)
-pDisp = [obj.nedof.v]; % collecte displacement of all dof
-pDisp(obj.dofMap>0) = 0; % set displacement of free dof to 0
-obj.fde = K * transpose(pDisp);
+% pDisp = [obj.nedof.v]; % collecte displacement of all dof
+% pDisp(obj.dofMap>0) = 0; % set displacement of free dof to 0
+obj.fde = zeros(8, 1);
 obj.fee = obj.foe - obj.fde;
 %
 end

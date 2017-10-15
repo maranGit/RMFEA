@@ -52,7 +52,7 @@ classdef FEMSolver < handle
             obj.Input(runName);
             for iStep = 1:obj.nstep
                 % update EBC and NBC of certain dof for current step
-                % since they are stored in element and note as reference
+                % since they are stored in element and node as reference
                 % update here is enough
                 EBC2 = obj.EBC;
                 incEBC = obj.mults(iStep) * EBC2(:,2);
@@ -68,7 +68,10 @@ classdef FEMSolver < handle
                 end
                 %
                 % update residual and stiffness of each element
-                obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
+                for temp = 1:obj.ne
+                    obj.elements(temp).Calculate_ElementStiffness_Force(obj.matAll);
+                end
+                % obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
                 %
                 % assemble Fint and Fext, then compute residual
                 Fext = [obj.dofs(obj.FBC).f]';
@@ -96,7 +99,10 @@ classdef FEMSolver < handle
                             obj.dofs(upDOF).vUpdate(deltaD(iFDof));
                         end
                         % compute new residual and stiffness
-                        obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
+                        for temp = 1:obj.ne
+                            obj.elements(temp).Calculate_ElementStiffness_Force(obj.matAll);
+                        end
+                        %obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
                         % assemble Fint and Fext, then compute residual
                         Fint = zeros(obj.nf, 1);
                         for iElem = 1:obj.ne
@@ -130,6 +136,8 @@ classdef FEMSolver < handle
                 fclose(fid2);
             end
         end
+        
+        plotMesh2(obj, MNE_ID)
     end
     
     methods (Access = private)
