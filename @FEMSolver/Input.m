@@ -110,5 +110,7 @@ end
 % read material model and parameters (allow only one material model for now)
 % MateDecl = strcat(mat{1},'(',mat{2},')');
 % obj.matAll = eval(MateDecl);
-obj.matAll = Hyperelastic([40;60]);
+matString = sprintf('%.2f;' , mat{2});
+matString = strcat(mat{1}, '([', matString(1:end-1), '])');
+obj.matAll = eval(matString);
 end

@@ -1,0 +1,10 @@
+Illustration of the relationship between:
+(1) essential BC correction; (2) external nodal force; (3) surface & body force, (4) element force and (5) reaction force.
+procedure:
+(1) put external nodal load in GLOBAL F vector;
+(2) put equivalent surface & body force in LOCAL foe vector;
+(3) put essential BC correction in LOCAL fde vector, compute total force fee vector;
+after solving free dofs:
+(4) assign free dofs;
+(5) compute element force and put in LOCAL fde vector, compute fee;
+(6) compute reaction force through balance law.

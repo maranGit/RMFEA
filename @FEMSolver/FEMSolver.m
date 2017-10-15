@@ -84,7 +84,7 @@ classdef FEMSolver < handle
                 Res_0 = norm(Res);
                 iter = 0;
                 % Newton-Raphson loop for displacement solution
-                    while ((norm(Res) > 1e-6*Res_0) && (iter < 10)) % hard-coded tolerance for now
+                    while (norm(Res) > 1e-6*Res_0) % hard-coded tolerance for now
                         % Assemble stiffness matrix
                         obj.F = Res;
                         obj.Assemble();
