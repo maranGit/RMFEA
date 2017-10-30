@@ -50,6 +50,7 @@ classdef FEMSolver < handle
             %=========================
             % small strain nonlinear material solver
             obj.Input(runName);
+            fid = fopen('Output','w');
             for iStep = 1:obj.nstep
                 % update EBC and NBC of certain dof for current step
                 % since they are stored in element and node as reference
@@ -87,7 +88,7 @@ classdef FEMSolver < handle
                 Res_0 = norm(Res);
                 iter = 0;
                 % Newton-Raphson loop for displacement solution
-                    while (norm(Res) > 1e-6*Res_0) % hard-coded tolerance for now
+                    while (norm(Res) > (1e-6)*Res_0) % hard-coded tolerance for now
                         % Assemble stiffness matrix
                         obj.F = Res;
                         obj.Assemble();
@@ -121,20 +122,22 @@ classdef FEMSolver < handle
                 % format: [ele1_gp1; ele1_gp2; ... ; ele(i)_gp(j)]
                 stress = [obj.elements.stress];
                 strain = [obj.elements.strain];
-                fname = strcat('EleStress', num2str(iStep, '%03d'));
-                fname2 = strcat('EleStrain', num2str(iStep, '%03d'));
-                fid = fopen(fname, 'w');
-                fid2 = fopen(fname2, 'w');
+                disp=[obj.dofs.v];
                 if obj.dim == 2
-                    fprintf(fid, '%5.2e, %5.2e, %5.2e\n', stress);
-                    fprintf(fid2, '%5.2e, %5.2e, %5.2e\n', strain);
+                    fprintf(fid, 'step %d\r\n', iStep);
+                    fprintf(fid, '  displacement\r\n');
+                    format = strcat(repmat('%5.2e, ', 1, 7), '%5.2e\r\n'); % work now only for one element model with 4 nodes
+                    fprintf(fid, format, disp);
+                    fprintf(fid, '  stress\r\n');
+                    fprintf(fid, '  %5.2e, %5.2e, %5.2e\r\n', stress);
+                    fprintf(fid, '  strain\r\n');
+                    fprintf(fid, '  %5.2e, %5.2e, %5.2e\r\n', strain);
                 elseif obj.dim == 3
                     fprintf(fid, '%5.2e, %5.2e, %5.2e, %5.2e, %5.2e, %5.2e\n', stress);
-                    fprintf(fid2, '%5.2e, %5.2e, %5.2e, %5.2e, %5.2e, %5.2e\n', strain);
+                    fprintf(fid, '%5.2e, %5.2e, %5.2e, %5.2e, %5.2e, %5.2e\n', strain);
                 end
-                fclose(fid);
-                fclose(fid2);
             end
+            fclose(fid);
         end
         
         plotMesh2(obj, MNE_ID)
