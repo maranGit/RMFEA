@@ -12,11 +12,6 @@ classdef PhyElement_CPE4 < PhyElement
 %           |
     properties
         thickness = 1.0
-        E = 100
-        nu = 0.25
-        E1
-        E2
-        G
         Bmat_1
         Bmat_2
         Bmat_3
@@ -35,6 +30,17 @@ classdef PhyElement_CPE4 < PhyElement
             obj.foe = zeros(8, 1);
             %obj.eNodes(4, 1) = PhyNode();
             %obj.edofs(8, 1) = PhyDof();
+        end
+        function Initialize(obj, nhardening)
+            % initialize hardening variables
+            obj.n_hardening = nhardening;
+            if nhardening == 0
+                obj.hardening_n = 0;
+                obj.hardening_np1 = 0;
+            else
+                obj.hardening_n = zeros(nhardening, 4);
+                obj.hardening_np1 = zeros(nhardening, 4);
+            end
         end
         J = formJ(obj)
         

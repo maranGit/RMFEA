@@ -23,6 +23,9 @@ classdef Hyperelastic < MaterialModel
                 error('Invalid input for Linear Hyperelastic material');
             end
         end
+        function Initialize(obj, ~)
+            obj.nhardening = 0; % no hardening variables for this model
+        end
         function [D, sigma] = calcStressTangent(obj, eps)
             if isequal(size(eps),[3,1])
                 traceEps = eps(1) + eps(2);

@@ -88,35 +88,38 @@ classdef FEMSolver < handle
                 Res_0 = norm(Res);
                 iter = 0;
                 % Newton-Raphson loop for displacement solution
-                    while (norm(Res) > (1e-6)*Res_0) % hard-coded tolerance for now
-                        % Assemble stiffness matrix
-                        obj.F = Res;
-                        obj.Assemble();
-                        % compute disp
-                        deltaD = obj.K \ obj.F;
-                        % update disp (consider replacing for loop in future version!)
-                        for iFDof = 1:obj.nf % update displacement of ith free dof
-                            upDOF = obj.FBC(iFDof);
-                            obj.dofs(upDOF).vUpdate(deltaD(iFDof));
-                        end
-                        % compute new residual and stiffness
-                        for temp = 1:obj.ne
-                            obj.elements(temp).Calculate_ElementStiffness_Force(obj.matAll);
-                        end
-                        %obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
-                        % assemble Fint and Fext, then compute residual
-                        Fint = zeros(obj.nf, 1);
-                        for iElem = 1:obj.ne
-                            currFint = obj.elements(iElem).Fint;
-                            currMap = obj.elements(iElem).dofMap;
-                            freeFint = currFint(currMap>0);
-                            freeMap = currMap(currMap>0);
-                            Fint(freeMap) = Fint(freeMap) + freeFint;
-                        end
-                        Res = Fext - Fint;
-                        iter = iter + 1;
-                        norm(Res);
+                while (norm(Res) > (1e-6)*Res_0) % hard-coded tolerance for now
+                    % Assemble stiffness matrix
+                    obj.F = Res;
+                    obj.Assemble();
+                    % compute disp
+                    deltaD = obj.K \ obj.F;
+                    % update disp (consider replacing for loop in future version!)
+                    for iFDof = 1:obj.nf % update displacement of ith free dof
+                        upDOF = obj.FBC(iFDof);
+                        obj.dofs(upDOF).vUpdate(deltaD(iFDof));
                     end
+                    % compute new residual and stiffness
+                    for temp = 1:obj.ne
+                        obj.elements(temp).Calculate_ElementStiffness_Force(obj.matAll);
+                    end
+                    %obj.elements.Calculate_ElementStiffness_Force(obj.matAll); % should include one material model as input @@@@@
+                    % assemble Fint and Fext, then compute residual
+                    Fint = zeros(obj.nf, 1);
+                    for iElem = 1:obj.ne
+                        currFint = obj.elements(iElem).Fint;
+                        currMap = obj.elements(iElem).dofMap;
+                        freeFint = currFint(currMap>0);
+                        freeMap = currMap(currMap>0);
+                        Fint(freeMap) = Fint(freeMap) + freeFint;
+                    end
+                    Res = Fext - Fint;
+                    iter = iter + 1;
+                    norm(Res);
+                end
+                %
+                % update hardening variables
+                obj.elements.update;
                 %
                 % output state variables of each element
                 % format: [ele1_gp1; ele1_gp2; ... ; ele(i)_gp(j)]

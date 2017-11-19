@@ -33,6 +33,17 @@ classdef PhyElement_NLCPE4 < PhyElement
             %obj.eNodes(4, 1) = PhyNode();
             %obj.edofs(8, 1) = PhyDof();
         end
+        function Initialize(obj, nhardening)
+            % initialize hardening variables
+            obj.n_hardening = nhardening;
+            if nhardening == 0
+                obj.hardening_n = 0;
+                obj.hardening_np1 = 0;
+            else
+                obj.hardening_n = zeros(nhardening, 4);
+                obj.hardening_np1 = zeros(nhardening, 4);
+            end
+        end
         
         % detail of virtual function in PhyElement.m
         % get surface area of the element

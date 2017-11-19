@@ -23,6 +23,9 @@ classdef FiniteHyperElastic < MaterialModel
                 error('Invalid input for FiniteHyperElastic.m');
             end
         end
+        function Initialize(obj, ~)
+            obj.nhardening = 0; % no hardening variables for this model
+        end
         function [D, sigma] = calcStressTangent(obj, eps)
             if isequal(size(eps),[3,1])
                 J = sqrt( eps(1) * eps(2) - 0.25 * eps(3)^2 );

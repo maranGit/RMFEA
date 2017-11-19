@@ -67,10 +67,17 @@ Bmat4 = [dNdx4(1, 1), 0,           dNdx4(1, 2), 0,           dNdx4(1, 3), 0,    
 %
 disp = [obj.nedof.v]'; % should change to edofs in future version @@@
 obj.strain = [Bmat1*disp, Bmat2*disp, Bmat3*disp, Bmat4*disp];
-[D1, sigma1] = mat.calcStressTangent(obj.strain(:,1));
-[D2, sigma2] = mat.calcStressTangent(obj.strain(:,2));
-[D3, sigma3] = mat.calcStressTangent(obj.strain(:,3));
-[D4, sigma4] = mat.calcStressTangent(obj.strain(:,4));
+if obj.n_hardening == 0
+    [D1, sigma1] = mat.calcStressTangent(obj.strain(:,1));
+    [D2, sigma2] = mat.calcStressTangent(obj.strain(:,2));
+    [D3, sigma3] = mat.calcStressTangent(obj.strain(:,3));
+    [D4, sigma4] = mat.calcStressTangent(obj.strain(:,4));
+else
+    [D1, sigma1, obj.hardening_np1(:,1)] = mat.calcStressTangent(obj.strain(:,1), obj.hardening_n(:,1));
+    [D2, sigma2, obj.hardening_np1(:,2)] = mat.calcStressTangent(obj.strain(:,2), obj.hardening_n(:,2));
+    [D3, sigma3, obj.hardening_np1(:,3)] = mat.calcStressTangent(obj.strain(:,3), obj.hardening_n(:,3));
+    [D4, sigma4, obj.hardening_np1(:,4)] = mat.calcStressTangent(obj.strain(:,4), obj.hardening_n(:,4));
+end
 obj.stress = [sigma1, sigma2, sigma3, sigma4];
 %
 % construct element stiffness matrix

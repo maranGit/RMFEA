@@ -14,14 +14,23 @@ classdef PhyElement < handle
         strain % strain at each integration point
         stress % stress at each integration point
         Fint   % F internal at each integration point
+        n_hardening   % number of hardening variables
+        hardening_n   % hardening variables from step n ( vector<double> )
+        hardening_np1 % hardening variables from step n+1 ( vector<double> )
     end
     methods
         function obj = PhyElement()
             % object constructor
             
         end
+        function update(obj)
+            obj.hardening_n = obj.hardening_np1;
+        end
     end
     methods (Abstract)
+        % Initializing hardening variables vector
+        Initialize(obj, n_hardening)
+        
         % coordinate -> geometry
         setGeometry(obj)
         

@@ -3,14 +3,18 @@ function Input(obj, runName)
 if exist('runName', 'var')
     run(runName);
 else
-    coordinates = [0,0; 1,0; 0,1; 1,1; 2,0; 2,1];
-    incidences = [1 1 2 4 3; 2 2 5 6 4];
+    coordinates = [-1,-1; +1,-1; +1,+1; -1,+1];
+    incidences = [1 1 2 3 4];
     eType = 'PhyElement_CPE4';
     EBC = [1, 1, 0;
         1, 2, 0;
-        3, 1, 0];
-    NBC = [5, 1, 1;
-        6, 1, 1];
+        2, 2, 0;
+        4, 1, 0];
+    NBC = [2, 1, -15.0;
+        3, 1, -15.0];
+    nummat = 1;
+    mults = 0.1*ones(10,1);
+    mat = {'Hyperelastic',[40;60]};
 end
 
 %% check input file
@@ -113,4 +117,9 @@ end
 matString = sprintf('%.2f;' , mat{2});
 matString = strcat(mat{1}, '([', matString(1:end-1), '])');
 obj.matAll = eval(matString);
+obj.matAll.Initialize(obj.dim);
+nhardening = obj.matAll.nhardening;
+%
+% initialize the element subroutine
+obj.elements.Initialize(nhardening);
 end
