@@ -1,0 +1,3 @@
+function setInternalMaterialProperties(obj)
+
+end

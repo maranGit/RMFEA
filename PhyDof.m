@@ -4,6 +4,7 @@ classdef PhyDof < handle
         pos = 1 % (int) position in the global system (for free and prescribed)
         v = 0.0 % (double) value of dof, i.e. global displacement
         f = 0.0 % (double) force corresponding to dof
+        vn = 0.0 % value of previous step
     end
     methods
         function obj = PhyDof(p, pos, v, f)
@@ -26,6 +27,11 @@ classdef PhyDof < handle
         end
         function fUpdate(obj, deltaF)
             obj.f = obj.f + deltaF;
+        end
+        %
+        % v_{n} = v_{n+1}
+        function Update(obj)
+            obj.vn = obj.v;
         end
     end
 end

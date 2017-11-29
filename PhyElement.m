@@ -12,7 +12,8 @@ classdef PhyElement < handle
         foe % surface load and body force (and thermal force in future)
         fee % foe - fde
         strain % strain at each integration point
-        stress % stress at each integration point
+        stress % stress of step n+1
+        stress_n % stress of step n
         Fint   % F internal at each integration point
         n_hardening   % number of hardening variables
         hardening_n   % hardening variables from step n ( vector<double> )
@@ -23,7 +24,8 @@ classdef PhyElement < handle
             % object constructor
             
         end
-        function update(obj)
+        function Update(obj)
+            obj.stress_n = obj.stress;
             obj.hardening_n = obj.hardening_np1;
         end
     end
