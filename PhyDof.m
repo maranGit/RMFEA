@@ -33,5 +33,11 @@ classdef PhyDof < handle
         function Update(obj)
             obj.vn = obj.v;
         end
+        function output(obj, fid, group)
+            disp = [obj.v];
+            fprintf(fid, '  displacement\n');
+            format = strcat(repmat('%5.2e, ', 1, group-1), '%5.2e\n');
+            fprintf(fid, format, disp);
+        end
     end
 end

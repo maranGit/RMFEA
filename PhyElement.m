@@ -28,6 +28,22 @@ classdef PhyElement < handle
             obj.stress_n = obj.stress;
             obj.hardening_n = obj.hardening_np1;
         end
+        function output(obj, fid)
+            sizeStress = size([obj.stress], 1);
+            sizeStrain = size([obj.strain], 1);
+            formatStress = repmat('%5.6e, ', 1, sizeStress);
+            formatStress([end-1, end]) = '\n';
+            formatStress = strcat('  ', formatStress);
+            formatStrain = repmat('%5.6e, ', 1, sizeStrain);
+            formatStrain([end-1, end]) = '\n';
+            formatStrain = strcat('  ', formatStrain);
+            fprintf(fid, '  stress at each integration point\n');
+            fprintf(fid, formatStress, obj.stress);
+            fprintf(fid, '  strain at each integration point\n');
+            fprintf(fid, formatStrain, obj.strain);
+%             fprintf(fid, '  consistent stiffness matrix at each integration point\n');
+%             fprintf(fid, '%5.6e, %5.6e, %5.6e\n', obj.C);
+        end
     end
     methods (Abstract)
         % Initializing hardening variables vector

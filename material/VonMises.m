@@ -44,7 +44,7 @@ classdef VonMises < MaterialModel
         end
         function Initialize(obj, dimension)
             if dimension == 2          % 2d von-Mises model
-                obj.nhardening = 7;
+                obj.nhardening = 13;
             elseif dimension == 3      % 3d von-Mises model
                 obj.nhardening = 13;
             else
@@ -61,16 +61,13 @@ classdef VonMises < MaterialModel
             I2_tensor_I2(1:3, 1:3) = 1;
             off_diag = [2; 3; 4; 6; 7; 8]; % off-diagonal element of 3x3 matrix
             % Initialization
+            ep_n = hardening_n(voigt3_inv);
+            ep_n(off_diag) = ep_n(off_diag) * 0.5;
+            alpha_n = hardening_n(7, 1);
+            beta_n = hardening_n(voigt3_inv + 7);
             if isequal(size(eps), [3,1])
                 % 2d plane strain
                 dim = 2;
-                ep_n = zeros(3, 3);
-                ep_n(1:2, 1:2) = hardening_n(voigt2_inv);
-                ep_n(off_diag) = ep_n(off_diag) * 0.5;
-                alpha_n = hardening_n(4, 1);
-                beta_n = zeros(3, 3);
-                beta_n(1:2, 1:2) = hardening_n(voigt2_inv + 4);
-                beta_n(off_diag) = beta_n(off_diag) * 0.5;
                 eps_new = zeros(3, 3);
                 eps_new(1:2, 1:2) = eps(voigt2_inv);
                 eps_new(off_diag) = eps_new(off_diag) * 0.5;
@@ -78,11 +75,6 @@ classdef VonMises < MaterialModel
             elseif isequal(size(eps), [6,1])
                 % 3d
                 dim = 3;
-                ep_n = hardening_n(voigt3_inv);
-                ep_n(off_diag) = ep_n(off_diag) * 0.5;
-                alpha_n = hardening_n(7, 1);
-                beta_n = hardening_n(voigt3_inv + 7);
-                beta_n(off_diag) = beta_n(off_diag) * 0.5;
                 eps_new = eps(voigt3_inv);
                 eps_new(off_diag) = eps_new(off_diag) * 0.5;
                 eps = eps_new;
@@ -115,6 +107,7 @@ classdef VonMises < MaterialModel
                     C = C_np1([1,2,6], [1,2,6]);
                 elseif dim == 3
                     sigma = sigma(voigt3);
+                    C = C_np1;
                 end
                 return
             end
@@ -138,14 +131,12 @@ classdef VonMises < MaterialModel
             if dim == 2
                 sigma = sigma_np1(voigt2);
                 C = C_np1([1,2,6], [1,2,6]);
-                hardening_np1 = [ep_np1(voigt2); alpha_np1; beta_np1(voigt2)];
-                hardening_np1(3) = hardening_np1(3) * 2;
             elseif dim == 3
                 sigma = sigma_np1(voigt3);
                 C = C_np1;
-                hardening_np1 = [ep_np1(voigt3); alpha_np1; beta_np1(voigt3)];
-                hardening_np1(4:6) = hardening_np1(4:6) * 2;
             end
+            hardening_np1 = [ep_np1(voigt3); alpha_np1; beta_np1(voigt3)];
+            hardening_np1(4:6) = hardening_np1(4:6) * 2;
         end
         function [dGamma, alpha_np1] = gamma(obj, ksi_tr, alpha_n)
             % Initialize

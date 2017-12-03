@@ -121,5 +121,7 @@ obj.matAll.Initialize(obj.dim);
 nhardening = obj.matAll.nhardening;
 %
 % initialize the element subroutine
-obj.elements.Initialize(nhardening);
+for temp = 1:ne_temp
+    obj.elements(temp).Initialize(nhardening);
+end
 end

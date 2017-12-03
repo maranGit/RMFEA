@@ -45,8 +45,8 @@ classdef ele3 < PhyElement
             % initialize hardening variables
             obj.n_hardening = nhardening;
             if nhardening == 0
-                obj.hardening_n = 0;
-                obj.hardening_np1 = 0;
+                obj.hardening_n = zeros(1, 4);
+                obj.hardening_np1 = zeros(1, 4);
             else
                 obj.hardening_n = zeros(nhardening, 4);
                 obj.hardening_np1 = zeros(nhardening, 4);

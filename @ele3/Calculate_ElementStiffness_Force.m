@@ -53,7 +53,7 @@ for gp = 1:numgp
     %
     % compute shape function gradient
     dNdksi = dNdksiALL([2*gp-1, 2*gp], :);
-    Jcurr = dNdksi * transpose(x_n); % Jacobian (dx/dksi)'
+    Jcurr = dNdksi * transpose(x_np1); % Jacobian (dx/dksi)'
     dNdx = Jcurr \ dNdksi;
     Jref = dNdksi * transpose(X); % Jacobian (dX/dksi)'
     dNdX = Jref \ dNdksi;
@@ -77,6 +77,21 @@ for gp = 1:numgp
     voigt = [1;5;9;8;7;4];
     D = D_tensor(voigt);
     D(4:6) = D(4:6) * 2;
+    %{
+    % another way of computing strain
+    Jhalf = dNdksi * transpose((x_np1 + x_n)/2);
+    dNdx1 = Jhalf \ dNdksi;
+    Bhalf = [dNdx1(1, 1), 0,           dNdx1(1, 2), 0,           dNdx1(1, 3), 0,           dNdx1(1, 4), 0;
+         0,           dNdx1(2, 1), 0,           dNdx1(2, 2), 0,           dNdx1(2, 3), 0,           dNdx1(2, 4);
+         dNdx1(2, 1), dNdx1(1, 1), dNdx1(2, 2), dNdx1(1, 2), dNdx1(2, 3), dNdx1(1, 3), dNdx1(2, 4), dNdx1(1, 4)];
+    eps = Bhalf * (disp_np1 - disp_n);
+    eps_tilde = [eps(1),eps(3)/2,0;eps(3)/2,eps(2),0;0,0,0];
+    R_npa = polarDecomp(F_npa);
+    D_tensor = transpose(R_npa) * eps_tilde * R_npa;
+    voigt = [1;5;9;8;7;4];
+    D = D_tensor(voigt);
+    D(4:6) = D(4:6) * 2;
+    %}
     %
     % pass strain, stress and hardening variable to material subroutine
     % 3d voigt notation
@@ -113,6 +128,7 @@ for gp = 1:numgp
          sigma(5),   0,          sigma(5),   0.5*sigma(6),         0.5*(sigma(1) + (3)), 0.5*sigma(4);
          sigma(6),   sigma(6),   0,          0.5*sigma(5),         0.5*sigma(4),         0.5*(sigma(1) + (2))];
     E = transpose(T) * C * T - Q;
+%     E = C;
     E_2d = E([1,2,6], [1,2,6]);
     %
     % construct a 4*8 B matrix for finite deformation
@@ -134,6 +150,7 @@ for gp = 1:numgp
     % update Fint and K
     voigt34 = [1; 6; 6; 2];
     K = K + transpose(B) * (C_matrix + sigma_matrix) * B * det(Jcurr);
+%     K = K + transpose(B) * (C_matrix) * B * det(Jref);
     Fint = Fint + transpose(B) * sigma(voigt34) * det(Jcurr);
 end
 obj.ke = K;

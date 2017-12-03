@@ -103,4 +103,8 @@ obj.Fint = transpose(Bmat1) * sigma1 / det(J1) ...
 obj.fde = zeros(8, 1);
 obj.fee = obj.foe - obj.fde;
 %
+% store stiffness matrix
+% obj.C(1) = D1(1, 1);
+% obj.C(2) = D1(2, 2);
+% obj.C(3) = D1(3, 3) * 2;
 end

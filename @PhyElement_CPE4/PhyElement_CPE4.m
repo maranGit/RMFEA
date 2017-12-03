@@ -41,6 +41,7 @@ classdef PhyElement_CPE4 < PhyElement
                 obj.hardening_n = zeros(nhardening, 4);
                 obj.hardening_np1 = zeros(nhardening, 4);
             end
+%             obj.C = zeros(3, 1);
         end
         J = formJ(obj)
         

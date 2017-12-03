@@ -17,7 +17,6 @@ classdef VonMises_finite < MaterialModel
         K0
         K1
         H1
-        alpha = 0.5 % mid-point rule
     end
     methods
         function obj = VonMises_finite(inp)
@@ -112,13 +111,15 @@ classdef VonMises_finite < MaterialModel
             Q_tr = Q_n;
             ksi_tr = SIGMA_tr - Q_tr;
             ksi_tr(Diag) = ksi_tr(Diag) - sum(ksi_tr(Diag)) * ones(3, 1) / 3;
-            temp1 = ksi_tr .* conj(ksi_tr);
-            temp2 = ksi_tr(offDiag) .* conj(ksi_tr(offDiag));
-            normKsiTr = sqrt(sum(temp1) + sum(temp2));
+%             temp1 = ksi_tr .* conj(ksi_tr);
+%             temp2 = ksi_tr(offDiag) .* conj(ksi_tr(offDiag));
+%             normKsiTr = sqrt(sum(temp1) + sum(temp2));
+            temp = ksi_tr .* ksi_tr;
+            normKsiTr = sqrt(sum(temp) + sum(temp(offDiag)));
             f_tr = normKsiTr - sqrt(2/3) * (K_0 + K_1 * ALPHA_n);
             %
             % radial return method
-            if f_tr <= 0
+            if real(f_tr) <= 0
                 SIGMA_np1 = SIGMA_tr;
                 hardening_np1 = hardening_n;
             else

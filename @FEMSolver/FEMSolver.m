@@ -38,16 +38,6 @@ classdef FEMSolver < handle
         
         % All steps together:
         function FEMSolve(obj, runName)
-            %{
-            % Linear elastic small strain solver
-            obj.Input(runName);
-            obj.Calculate_ElementStiffness_Force(); 
-            obj.Assemble();
-            d = obj.Solve_Dofs();
-            obj.Assign_dof(d);
-            obj.UpdateFpNodalPrescribedForces;
-            %}
-            %=========================
             % small strain nonlinear material solver
             obj.Input(runName);
             fid = fopen('Output','w');
@@ -88,7 +78,7 @@ classdef FEMSolver < handle
                 Res_0 = norm(Res);
                 iter = 0;
                 % Newton-Raphson loop for displacement solution
-                while (norm(Res) > (1e-12)*Res_0) % hard-coded tolerance for now
+                while (norm(Res) > (1e-12)*Res_0) && (norm(Res) > 1e-12) % hard-coded tolerance for now
                     % Assemble stiffness matrix
                     obj.F = Res;
                     obj.Assemble();
@@ -115,33 +105,22 @@ classdef FEMSolver < handle
                     end
                     Res = Fext - Fint;
                     iter = iter + 1;
-                    norm(Res);
                 end
                 %
                 % update hardening variables
-                obj.elements.Update;
+                fprintf('step %d converges in %d iterations\n', iStep, iter);
+                for temp = 1:obj.ne
+                    obj.elements(temp).Update;
+                end
                 for temp = 1:obj.ndof
                     obj.dofs(temp).Update;
                 end
                 %
                 % output state variables of each element
-                % format: [ele1_gp1; ele1_gp2; ... ; ele(i)_gp(j)]
-                stress = [obj.elements.stress];
-                strain = [obj.elements.strain];
-                disp=[obj.dofs.v];
-                if obj.dim == 2
-                    fprintf(fid, 'step %d\r\n', iStep);
-                    fprintf(fid, '  displacement\r\n');
-                    format = strcat(repmat('%5.2e, ', 1, 7), '%5.2e\r\n'); % work now only for one element model with 4 nodes
-                    fprintf(fid, format, disp);
-                    fprintf(fid, '  stress\r\n');
-                    fprintf(fid, '  %5.6e, %5.6e, %5.6e\r\n', stress);
-                    fprintf(fid, '  strain\r\n');
-                    fprintf(fid, '  %5.6e, %5.6e, %5.6e\r\n', strain);
-                elseif obj.dim == 3
-                    fprintf(fid, '%5.2e, %5.2e, %5.2e, %5.2e, %5.2e, %5.2e\n', stress);
-                    fprintf(fid, '%5.2e, %5.2e, %5.2e, %5.2e, %5.2e, %5.2e\n', strain);
-                end
+                fprintf(fid, 'step %d node output\r\n', iStep);
+                obj.dofs.output(fid, obj.ndofpn);
+                fprintf(fid, 'step %d element output\r\n', iStep);
+                obj.elements.output(fid);
             end
             fclose(fid);
         end
