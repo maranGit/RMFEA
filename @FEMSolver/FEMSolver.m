@@ -105,6 +105,10 @@ classdef FEMSolver < handle
                     end
                     Res = Fext - Fint;
                     iter = iter + 1;
+                    % debug block
+                    if iStep == 29
+                        norm(Res)
+                    end
                 end
                 %
                 % update hardening variables
