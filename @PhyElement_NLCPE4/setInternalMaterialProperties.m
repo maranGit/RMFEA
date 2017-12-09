@@ -1,3 +1,0 @@
-function setInternalMaterialProperties(obj)
-
-end

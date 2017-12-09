@@ -15,6 +15,7 @@ else
     nummat = 1;
     mults = 0.1*ones(10,1);
     mat = {'Hyperelastic',[40;60]};
+    lint = 4;
 end
 
 %% check input file
@@ -94,9 +95,12 @@ obj.nodes = nodeAll;
 eleAll(ne_temp, 1) = eval(eType); % avoid using 'switch'
 for temp = 1:ne_temp
     eleAll(temp).id = incidences(temp, 1);
+    eleAll(temp).lint = lint;
+    eleAll(temp).neNodes = size(incidences, 2) - 1;
     eleAll(temp).eNodes = obj.nodes(incidences(temp, 2:end));
     eleAll(temp).nedof = reshape([eleAll(temp).eNodes.ndof], [], 1);
     eleAll(temp).dofMap = [eleAll(temp).nedof.pos]';
+    eleAll(temp).numDofs = curDim * eleAll(temp).neNodes;
 end
 obj.elements = eleAll;
 %
