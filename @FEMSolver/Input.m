@@ -19,6 +19,7 @@ else
 end
 
 %% check input file
+obj.dim = dimension;
 nNodes_temp = size(coordinates, 1); % int, total nodes
 ne_temp = size(incidences, 1); % int, total elements
 ndof_temp = nNodes_temp * obj.dim; % int, total dofs
@@ -81,12 +82,12 @@ obj.EBC = sortrows(EBC_temp);
 obj.FBC = sortrows(FBC_temp);
 %
 % initialize nodes
-curDim = obj.dim;
+obj.ndofpn = dimension;
 nodeAll(nNodes_temp, 1) = PhyNode();
 for temp = 1:nNodes_temp
     nodeAll(temp).id = temp;
-    nodeAll(temp).nndof = curDim;
-    nodeAll(temp).ndof = dofAll((temp*curDim-curDim+1):(temp*curDim));
+    nodeAll(temp).nndof = dimension;
+    nodeAll(temp).ndof = dofAll((temp*dimension-dimension+1):(temp*dimension));
     nodeAll(temp).coordinates = coordinates(temp, :);
 end
 obj.nodes = nodeAll;
@@ -100,7 +101,7 @@ for temp = 1:ne_temp
     eleAll(temp).eNodes = obj.nodes(incidences(temp, 2:end));
     eleAll(temp).nedof = reshape([eleAll(temp).eNodes.ndof], [], 1);
     eleAll(temp).dofMap = [eleAll(temp).nedof.pos]';
-    eleAll(temp).numDofs = curDim * eleAll(temp).neNodes;
+    eleAll(temp).numDofs = dimension * eleAll(temp).neNodes;
 end
 obj.elements = eleAll;
 %

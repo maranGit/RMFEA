@@ -26,14 +26,8 @@ classdef FEMSolver < handle
         % ndofs % position of loaded dofs in dofs
     end
     methods
-        function obj = FEMSolver(dim)		% works as function with one or zero argument
-            if nargin == 0
-                obj.dim = 2;
-                obj.ndofpn = 2;
-            else
-                obj.dim = dim;
-                obj.ndofpn = dim;
-            end
+        function obj = FEMSolver()		% works as function with one or zero argument
+            
         end
         
         % All steps together:

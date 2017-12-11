@@ -52,35 +52,29 @@ classdef VonMises < MaterialModel
             end
         end
         function [C, sigma, hardening_np1] = calcStressTangent(obj, eps, hardening_n)
-            voigt2 = [1;5;4];
-            voigt2_inv = [1, 3; 3, 2];
+%             voigt2 = [1;5;4];
+%             voigt2_inv = [1, 3; 3, 2];
             voigt3 = [1; 5; 9; 8; 7; 4];
             voigt3_inv = [1, 6, 5; 6, 2, 4; 5, 4, 3];
             I4 = diag([1.0, 1.0, 1.0, 0.5, 0.5, 0.5]); % fourth order identity tensor
             I2_tensor_I2 = zeros(6, 6); % delta tensor-products delta
             I2_tensor_I2(1:3, 1:3) = 1;
             off_diag = [2; 3; 4; 6; 7; 8]; % off-diagonal element of 3x3 matrix
+            %
             % Initialization
             ep_n = hardening_n(voigt3_inv);
             ep_n(off_diag) = ep_n(off_diag) * 0.5;
             alpha_n = hardening_n(7, 1);
             beta_n = hardening_n(voigt3_inv + 7);
-            if isequal(size(eps), [3,1])
-                % 2d plane strain
-                dim = 2;
-                eps_new = zeros(3, 3);
-                eps_new(1:2, 1:2) = eps(voigt2_inv);
-                eps_new(off_diag) = eps_new(off_diag) * 0.5;
-                eps = eps_new;
-            elseif isequal(size(eps), [6,1])
-                % 3d
-                dim = 3;
-                eps_new = eps(voigt3_inv);
-                eps_new(off_diag) = eps_new(off_diag) * 0.5;
-                eps = eps_new;
-            else
-                error('strain must be Voigt notation (6x1) vector')
+            %
+            % strain tensor
+            if ~isequal(size(eps), [6,1])
+                error('strain must be Voigt notation (6x1) vector');
             end
+%             dim = 3;
+            eps_new = eps(voigt3_inv);
+            eps_new(off_diag) = eps_new(off_diag) * 0.5;
+            eps = eps_new;
             %
             % Initialize
             K_0 = obj.K0;
@@ -102,13 +96,8 @@ classdef VonMises < MaterialModel
                 sigma = s_tr + kappa * trace(eps) * eye(3);
                 C_np1 = kappa * I2_tensor_I2 + 2 * mu * (I4 - I2_tensor_I2 / 3);
                 hardening_np1 = hardening_n;
-                if dim == 2
-                    sigma = sigma(voigt2);
-                    C = C_np1([1,2,6], [1,2,6]);
-                elseif dim == 3
-                    sigma = sigma(voigt3);
-                    C = C_np1;
-                end
+                sigma = sigma(voigt3);
+                C = C_np1;
                 return
             end
             %
@@ -128,13 +117,8 @@ classdef VonMises < MaterialModel
             C_np1 = kappa * I2_tensor_I2 + 2 * mu * theta * (I4 - I2_tensor_I2 / 3) - 2 * mu * theta_bar * n_tensor_n;
             %
             % transfer to Voigt notation
-            if dim == 2
-                sigma = sigma_np1(voigt2);
-                C = C_np1([1,2,6], [1,2,6]);
-            elseif dim == 3
-                sigma = sigma_np1(voigt3);
-                C = C_np1;
-            end
+            sigma = sigma_np1(voigt3);
+            C = C_np1;
             hardening_np1 = [ep_np1(voigt3); alpha_np1; beta_np1(voigt3)];
             hardening_np1(4:6) = hardening_np1(4:6) * 2;
         end

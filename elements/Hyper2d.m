@@ -90,9 +90,9 @@ classdef Hyper2d < PhyElement
                 % deformation gradient
                 F = x * dNdX; % deformation gradient
                 % construct a 4*8 B matrix for finite deformation
-                B = zeros(4, 8);
-                B(1:2, 1:2:7) = transpose(dNdx);
-                B(3:4, 2:2:8) = transpose(dNdx);
+                B = zeros(4, 2*nel);
+                B(1:2, 1:2:end) = transpose(dNdx);
+                B(3:4, 2:2:end) = transpose(dNdx);
                 b = F * transpose(F); % left Cauchy-Green strain tensor
                 b_voigt = [b(1,1); b(2,2); b(1,2) + b(2,1)];
                 [C, sigma] = mat.calcStressTangent(b_voigt);

@@ -169,9 +169,9 @@ classdef Hypo2d < PhyElement
                 E_2d = E([1,2,6], [1,2,6]);
                 %
                 % construct a 4*8 B matrix for finite deformation
-                B = zeros(4, 8);
-                B(1:2, 1:2:7) = transpose(dNdx);
-                B(3:4, 2:2:8) = transpose(dNdx);
+                B = zeros(4, 2*nel);
+                B(1:2, 1:2:end) = transpose(dNdx);
+                B(3:4, 2:2:end) = transpose(dNdx);
                 %
                 % form geometric stiffness term
                 voigt32 = [1, 6; 6, 2];

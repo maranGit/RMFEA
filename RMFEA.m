@@ -29,5 +29,5 @@ runName = filename;
 if (~exist('runName','var'))
     runName = 'TestInput1';
 end
-femSolver = FEMSolver(2);
+femSolver = FEMSolver();
 femSolver.FEMSolve(runName);

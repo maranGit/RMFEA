@@ -3,7 +3,7 @@
 % dimension = 2;
 % coordinates = [0,0; +1,0; +1,+1; 0,+1];
 % incidences = [1 1 2 3 4];
-% eType = 'PhyElement_NLCPE4';
+% eType = 'Hyper2d';
 % EBC = [1, 1, 0;
 %        1, 2, 0;
 %        4, 1, 0;
@@ -12,6 +12,7 @@
 %        3, 1, 0.2];
 % NBC = [2, 2, 0;
 %        3, 2, 0];
+% lint = 4;
 % nummat = 1;
 % mults = 0.1*ones(10,1);
 % mat = {'FiniteHyperElastic',[40;40]};
@@ -20,7 +21,7 @@
 dimension = 2;
 coordinates = [0,0; +1,0; +1,+1; 0,+1];
 incidences = [1 1 2 3 4];
-eType = 'PhyElement_NLCPE4';
+eType = 'Hyper2d';
 EBC = [1, 1, 0;
        1, 2, 0;
        2, 1, 0;
@@ -29,6 +30,7 @@ EBC = [1, 1, 0;
        4, 1, 0.2];
 NBC = [3, 2, 0;
        4, 2, 0];
+lint = 4;
 nummat = 1;
 mults = 0.1*ones(10,1);
 mat = {'FiniteHyperElastic',[40;40]};
