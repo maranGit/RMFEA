@@ -5,10 +5,6 @@ classdef Hyper2d < PhyElement
 
     properties
         thickness = 1.0
-        Bmat_1
-        Bmat_2
-        Bmat_3
-        Bmat_4
     end
     %     properties (Dependent)
     %         J

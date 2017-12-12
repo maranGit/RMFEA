@@ -70,6 +70,7 @@ classdef Hypo2d < PhyElement
             % u1, v1, u2, v2, u3, v3, u4, v4
             disp_n = [obj.nedof.vn]'; % should change to edofs in future version @@@
             disp_np1 = [obj.nedof.v]';
+            disp_np1
             numDof = length(disp_n);
             % x1, x2, x3, x4
             % y2, y3, y4, y4
@@ -135,6 +136,7 @@ classdef Hypo2d < PhyElement
                 SIGMA_n = obj.stress_n(:, gp);
                 [C, SIGMA_np1, obj.hardening_np1(:,gp)] = mat.calcStressTangent(D, SIGMA_n, obj.hardening_n(:,gp));
                 obj.stress(:, gp) = SIGMA_np1;
+                SIGMA_np1
                 % obj.strain(:, gp) = 0.5 * ( transpose(F_np1) * F_np1 - eye(dim) );
                 %
                 % compute rotation matrix
@@ -165,7 +167,7 @@ classdef Hypo2d < PhyElement
                     sigma(5),   0,          sigma(5),   0.5*sigma(6),         0.5*(sigma(1) + (3)), 0.5*sigma(4);
                     sigma(6),   sigma(6),   0,          0.5*sigma(5),         0.5*sigma(4),         0.5*(sigma(1) + (2))];
                 E = transpose(T) * C * T - Q;
-                %     E = C;
+%                     E = C;
                 E_2d = E([1,2,6], [1,2,6]);
                 %
                 % construct a 4*8 B matrix for finite deformation
