@@ -13,13 +13,8 @@ classdef Hypo2d < PhyElement
     methods
         function obj = Hypo2d()
             obj = obj@PhyElement();
-            obj.neNodes = 4;
-            obj.nedof = 8;
-            obj.fee = zeros(8, 1);
-            obj.fde = zeros(8, 1);
-            obj.foe = zeros(8, 1);
-            obj.stress = zeros(6, 4);
-            obj.strain = zeros(6, 4);
+            obj.stress = zeros(6, obj.lint);
+            obj.strain = zeros(6, obj.lint);
             %obj.eNodes(4, 1) = PhyNode();
             %obj.edofs(8, 1) = PhyDof();
         end
@@ -33,8 +28,13 @@ classdef Hypo2d < PhyElement
                 obj.hardening_n = zeros(nhardening, 4);
                 obj.hardening_np1 = zeros(nhardening, 4);
             end
-            obj.stress_n = zeros(6, 4);
-            obj.stress = zeros(6, 4);
+            obj.stress_n = zeros(6, obj.lint);
+            obj.stress = zeros(6, obj.lint);
+            obj.fee = zeros(obj.numDofs, 1);
+            obj.fde = zeros(obj.numDofs, 1);
+            obj.foe = zeros(obj.numDofs, 1);
+            obj.ke = zeros(obj.numDofs, obj.numDofs);
+            obj.Fint = zeros(obj.numDofs, 1);
         end
         % detail of virtual function in PhyElement.m
         % get surface area of the element
@@ -70,7 +70,6 @@ classdef Hypo2d < PhyElement
             % u1, v1, u2, v2, u3, v3, u4, v4
             disp_n = [obj.nedof.vn]'; % should change to edofs in future version @@@
             disp_np1 = [obj.nedof.v]';
-            disp_np1
             numDof = length(disp_n);
             % x1, x2, x3, x4
             % y2, y3, y4, y4
@@ -136,7 +135,6 @@ classdef Hypo2d < PhyElement
                 SIGMA_n = obj.stress_n(:, gp);
                 [C, SIGMA_np1, obj.hardening_np1(:,gp)] = mat.calcStressTangent(D, SIGMA_n, obj.hardening_n(:,gp));
                 obj.stress(:, gp) = SIGMA_np1;
-                SIGMA_np1
                 % obj.strain(:, gp) = 0.5 * ( transpose(F_np1) * F_np1 - eye(dim) );
                 %
                 % compute rotation matrix
